@@ -141,11 +141,11 @@ func (s *grabberControls) planGrab(ctx context.Context, zoneCfg *grabberZone, na
 			nil,
 		)
 		req := &armplanning.PlanRequest{
-			FrameSystem: fs,
-			WorldState:  s.worldState,
-			StartState:  startState,
-			Goals:       []*armplanning.PlanState{goalState},
-			Constraints: spec.constraints,
+			FrameSystem:           fs,
+			ObstaclesInWorldFrame: s.worldState,
+			StartState:            startState,
+			Goals:                 []*armplanning.PlanState{goalState},
+			Constraints:           spec.constraints,
 		}
 
 		t := time.Now()

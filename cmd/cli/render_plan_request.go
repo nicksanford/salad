@@ -42,9 +42,9 @@ func runRenderPlanRequest(flags RenderPlanRequestFlags) error {
 		startInputs = referenceframe.NewZeroInputs(req.FrameSystem)
 	}
 
-	if req.WorldState != nil {
-		if err := vizClient.DrawWorldState(req.WorldState, req.FrameSystem, startInputs); err != nil {
-			return fmt.Errorf("drawing world state: %w", err)
+	if req.ObstaclesInWorldFrame != nil {
+		if err := vizClient.DrawGeometries(req.ObstaclesInWorldFrame, nil); err != nil {
+			return fmt.Errorf("drawing obstacles: %w", err)
 		}
 	}
 

@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@threlte/core": "^8.5.9",
-    "@viamrobotics/motion-tools": "^1.18.1",
-    "@viamrobotics/sdk": "^0.66.0",
+    "@viamrobotics/motion-tools": "^1.36.2",
+    "@viamrobotics/sdk": "^0.74.1",
     "bson": "^7.3.1",
     "js-cookie": "^3.0.5",
     "tailwind-merge": "^3.5.0",

@@ -106,11 +106,11 @@ func (s *dressingControls) planDressing(ctx context.Context, name, buildID strin
 			nil,
 		)
 		req := &armplanning.PlanRequest{
-			FrameSystem: planFS,
-			WorldState:  s.worldState,
-			StartState:  startState,
-			Goals:       []*armplanning.PlanState{goalState},
-			Constraints: spec.constraints,
+			FrameSystem:           planFS,
+			ObstaclesInWorldFrame: s.obstaclesWorldFrame,
+			StartState:            startState,
+			Goals:                 []*armplanning.PlanState{goalState},
+			Constraints:           spec.constraints,
 		}
 
 		t := time.Now()
@@ -241,11 +241,11 @@ func (s *dressingControls) planCircularPour(
 	}
 
 	req := &armplanning.PlanRequest{
-		FrameSystem: fs,
-		WorldState:  s.worldState,
-		StartState:  startState,
-		Goals:       goals,
-		Constraints: cfg.Constraints,
+		FrameSystem:           fs,
+		ObstaclesInWorldFrame: s.obstaclesWorldFrame,
+		StartState:            startState,
+		Goals:                 goals,
+		Constraints:           cfg.Constraints,
 	}
 
 	t := time.Now()
