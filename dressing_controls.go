@@ -100,8 +100,8 @@ type dressingControls struct {
 	shakeArmService genericservice.Service
 	fsService       framesystem.Service
 
-	assetsMu   sync.Mutex
-	worldState *referenceframe.WorldState
+	assetsMu       sync.Mutex
+	worldObstacles *referenceframe.GeometriesInFrame
 
 	cachedPlansMu sync.Mutex
 	cachedPlans   map[string]*dressingPlan
@@ -204,7 +204,7 @@ func (s *dressingControls) loadWorldState() error {
 	s.assetsMu.Lock()
 	defer s.assetsMu.Unlock()
 
-	if s.worldState != nil {
+	if s.worldObstacles != nil {
 		return nil
 	}
 
@@ -223,17 +223,7 @@ func (s *dressingControls) loadWorldState() error {
 		return fmt.Errorf("failed to convert mesh to octree: %w", err)
 	}
 
-	ws, err := referenceframe.NewWorldState(
-		[]*referenceframe.GeometriesInFrame{
-			referenceframe.NewGeometriesInFrame(referenceframe.World, []spatialmath.Geometry{octree}),
-		},
-		nil,
-	)
-	if err != nil {
-		return fmt.Errorf("failed to build world state: %w", err)
-	}
-
-	s.worldState = ws
+	s.worldObstacles = referenceframe.NewGeometriesInFrame(referenceframe.World, []spatialmath.Geometry{octree})
 	return nil
 }
 
@@ -303,11 +293,11 @@ func (s *dressingControls) reset(ctx context.Context) (map[string]interface{}, e
 		nil,
 	)
 	req := &armplanning.PlanRequest{
-		FrameSystem: fs,
-		WorldState:  s.worldState,
-		StartState:  armplanning.NewPlanState(nil, startInputs),
-		Goals:       []*armplanning.PlanState{goalState},
-		Constraints: s.cfg.Home.Constraints,
+		FrameSystem:           fs,
+		ObstaclesInWorldFrame: s.worldObstacles,
+		StartState:            armplanning.NewPlanState(nil, startInputs),
+		Goals:                 []*armplanning.PlanState{goalState},
+		Constraints:           s.cfg.Home.Constraints,
 	}
 
 	plan, _, err := armplanning.PlanMotion(ctx, s.logger, req)
