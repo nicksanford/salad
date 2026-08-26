@@ -178,11 +178,11 @@ type grabberControls struct {
 	motionService     motion.Service
 	fsService         framesystem.Service
 
-	assetsMu    sync.Mutex
-	assetsDir   string
-	binMesh     *spatialmath.Mesh
-	worldState  *referenceframe.WorldState
-	loadedZones *segmentation.ZonesResult
+	assetsMu       sync.Mutex
+	assetsDir      string
+	binMesh        *spatialmath.Mesh
+	worldObstacles *referenceframe.GeometriesInFrame
+	loadedZones    *segmentation.ZonesResult
 
 	calibrationMu         sync.Mutex
 	gripperCalibrated     bool
@@ -574,16 +574,7 @@ func (s *grabberControls) loadAssets() error {
 			return fmt.Errorf("failed to convert bin mesh to octree: %w", err)
 		}
 
-		ws, err := referenceframe.NewWorldState(
-			[]*referenceframe.GeometriesInFrame{
-				referenceframe.NewGeometriesInFrame(referenceframe.World, []spatialmath.Geometry{octree}),
-			},
-			nil,
-		)
-		if err != nil {
-			return fmt.Errorf("failed to build world state: %w", err)
-		}
-		s.worldState = ws
+		s.worldObstacles = referenceframe.NewGeometriesInFrame(referenceframe.World, []spatialmath.Geometry{octree})
 	}
 
 	if s.loadedZones == nil {
